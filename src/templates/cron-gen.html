@@ -1,0 +1,382 @@
+<div class="cron-gen-main" data-ng-cloak>
+
+  <div class="ui-tab-tabs">
+    <button data-ng-show="!$ctrl.parsedOptions.hideMinutesTab" data-ng-click="$ctrl.setActiveTab($event)" data-target="minutes" name="tab-button" class="ui-tab-tab" is-tab>分钟</button>
+    <button data-ng-show="!$ctrl.parsedOptions.hideHourlyTab" data-ng-click="$ctrl.setActiveTab($event)" data-target="hourly" name="tab-button" class="ui-tab-tab" is-tab>小时</button>
+    <button data-ng-show="!$ctrl.parsedOptions.hideDailyTab" data-ng-click="$ctrl.setActiveTab($event)" data-target="daily" name="tab-button" class="ui-tab-tab" is-tab>日</button>
+    <button data-ng-show="!$ctrl.parsedOptions.hideWeeklyTab" data-ng-click="$ctrl.setActiveTab($event)" data-target="weekly" name="tab-button" class="ui-tab-tab" is-tab>周</button>
+    <button data-ng-show="!$ctrl.parsedOptions.hideMonthlyTab" data-ng-click="$ctrl.setActiveTab($event)" data-target="monthly" name="tab-button" class="ui-tab-tab" is-tab>月</button>
+    <button data-ng-show="!$ctrl.parsedOptions.hideYearlyTab" data-ng-click="$ctrl.setActiveTab($event)" data-target="yearly" name="tab-button" class="ui-tab-tab" is-tab>年</button>
+    <button data-ng-show="!$ctrl.parsedOptions.hideAdvancedTab" data-ng-click="$ctrl.setActiveTab($event)" data-target="advanced" name="tab-button" class="ui-tab-tab" is-tab open>自定义</button>
+  </div>
+  
+  <div data-ng-show="!$ctrl.parsedOptions.hideMinutesTab" id="minutes" class="ui-tab-content">
+    <div>
+      每隔
+      <select is="ui-select"
+              class="minutes"
+              name="minutesMinutes"
+              data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'minutes'"
+              data-ng-change="$ctrl.regenerateCron()"
+              data-ng-model="$ctrl.state.minutes.minutes"
+              data-ng-required="$ctrl.activeTab === 'minutes'"
+              data-ng-options="minute as minute for minute in $ctrl.selectOptions.minutes"
+              data-ng-class="$ctrl.parsedOptions.formSelectClass">
+      </select>
+      分钟执行一次
+
+      <span data-ng-show="!$ctrl.parsedOptions.hideSeconds">，在第</span>
+      <select is="ui-select"
+              class="seconds"
+              name="minutesSeconds"
+              data-ng-show="!$ctrl.parsedOptions.hideSeconds"
+              data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'minutes'"
+              data-ng-change="$ctrl.regenerateCron()"
+              data-ng-model="$ctrl.state.minutes.seconds"
+              data-ng-required="$ctrl.activeTab === 'minutes'"
+              data-ng-options="second as $ctrl.cronGenService.padNumber(second) for second in $ctrl.selectOptions.seconds"
+              data-ng-class="$ctrl.parsedOptions.formSelectClass">
+      </select>
+      <span data-ng-show="!$ctrl.parsedOptions.hideSeconds">秒执行</span>
+    </div>
+  </div>
+  <div data-ng-show="!$ctrl.parsedOptions.hideHourlyTab" id="hourly" class="ui-tab-content">
+    <div>
+      每隔
+      <select is="ui-select"
+              class="hours"
+              name="hourlyHours"
+              data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'hourly'"
+              data-ng-change="$ctrl.regenerateCron()"
+              data-ng-model="$ctrl.state.hourly.hours"
+              data-ng-required="$ctrl.activeTab === 'hourly'"
+              data-ng-options="hour as hour for hour in $ctrl.selectOptions.hours"
+              data-ng-class="$ctrl.parsedOptions.formSelectClass">
+      </select>
+      小时执行一次，在
+      <select is="ui-select"
+              class="minutes"
+              name="hourlyMinutes"
+              data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'hourly'"
+              data-ng-change="$ctrl.regenerateCron()"
+              data-ng-model="$ctrl.state.hourly.minutes"
+              data-ng-required="$ctrl.activeTab === 'hourly'"
+              data-ng-options="minute as $ctrl.cronGenService.padNumber(minute) for minute in $ctrl.selectOptions.fullMinutes"
+              data-ng-class="$ctrl.parsedOptions.formSelectClass">
+      </select>
+      分
+      <span data-ng-show="$ctrl.parsedOptions.hideSeconds">执行</span>
+      <span data-ng-show="!$ctrl.parsedOptions.hideSeconds"></span>
+      <select is="ui-select"
+              class="seconds"
+              name="hourlySeconds"
+              data-ng-show="!$ctrl.parsedOptions.hideSeconds"
+              data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'hourly'"
+              data-ng-change="$ctrl.regenerateCron()"
+              data-ng-model="$ctrl.state.hourly.seconds"
+              data-ng-required="$ctrl.activeTab === 'hourly'"
+              data-ng-options="second as $ctrl.cronGenService.padNumber(second) for second in $ctrl.selectOptions.seconds"
+              data-ng-class="$ctrl.parsedOptions.formSelectClass">
+      </select>
+      <span data-ng-show="!$ctrl.parsedOptions.hideSeconds">秒执行</span>
+    </div>
+
+  </div>
+  <div data-ng-show="!$ctrl.parsedOptions.hideDailyTab" id="daily" class="ui-tab-content">
+    <div>
+      <input type="radio"
+             is="ui-radio"
+             value="everyDays"
+             name="daily-radio"
+             data-ng-disabled="$ctrl.ngDisabled"
+             data-ng-change="$ctrl.regenerateCron()"
+             data-ng-model="$ctrl.state.daily.subTab"
+             data-ng-class="$ctrl.state.formRadioClass"
+             checked="checked">
+      每隔
+      <select is="ui-select"
+              class="days"
+              name="dailyEveryDaysDays"
+              data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'daily' || $ctrl.state.daily.subTab !== 'everyDays'"
+              data-ng-change="$ctrl.regenerateCron()"
+              data-ng-model="$ctrl.state.daily.everyDays.days"
+              data-ng-required="$ctrl.activeTab === 'daily' && $ctrl.state.daily.subTab === 'everyDays'"
+              data-ng-options="monthDay as monthDay for monthDay in $ctrl.selectOptions.monthDays"
+              data-ng-class="$ctrl.parsedOptions.formSelectClass">
+      </select>
+      天执行一次，在
+      <cron-gen-time-select
+        is-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'daily' || $ctrl.state.daily.subTab !== 'everyDays'"
+        on-change="$ctrl.regenerateCron()"
+        name-prefix="dailyEveryDays"
+        is-required="$ctrl.activeTab === 'daily' && $ctrl.state.daily.subTab === 'everyDays'"
+        model="$ctrl.state.daily.everyDays"
+        select-class="$ctrl.parsedOptions.formSelectClass"
+        use-24-hour-time="$ctrl.parsedOptions.use24HourTime"
+        hide-seconds="$ctrl.parsedOptions.hideSeconds">
+      </cron-gen-time-select>
+      执行
+    </div>
+    <div>
+      <input type="radio"
+             is="ui-radio"
+             value="everyWeekDay"
+             data-ng-disabled="$ctrl.ngDisabled"
+             data-ng-change="$ctrl.regenerateCron()"
+             data-ng-model="$ctrl.state.daily.subTab"
+             data-ng-class="$ctrl.state.formRadioClass"
+             name="daily-radio">
+      在周一到周五工作日
+      <cron-gen-time-select
+        is-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'daily' || $ctrl.state.daily.subTab !== 'everyWeekDay'"
+        on-change="$ctrl.regenerateCron()"
+        name-prefix="dailyEveryWeekDay"
+        is-required="$ctrl.activeTab === 'daily' && $ctrl.state.daily.subTab === 'everyWeekDay'"
+        model="$ctrl.state.daily.everyWeekDay"
+        select-class="$ctrl.parsedOptions.formSelectClass"
+        use-24-hour-time="$ctrl.parsedOptions.use24HourTime"
+        hide-seconds="$ctrl.parsedOptions.hideSeconds">
+      </cron-gen-time-select>
+      执行
+    </div>
+
+  </div>
+  <div data-ng-show="!$ctrl.parsedOptions.hideWeeklyTab" id="weekly" class="ui-tab-content">
+    <div class="well well-small row">
+      <div class="col-sm-6">
+        <input type="checkbox"
+               is="ui-checkbox"
+               name="weeklyMON"
+               data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'weekly'"
+               data-ng-change="$ctrl.regenerateCron()"
+               data-ng-model="$ctrl.state.weekly.MON"
+               data-ng-class="$ctrl.parsedOptions.formCheckboxClass">
+        周一
+      </div>
+      <div class="col-sm-6">
+        <input type="checkbox"
+               is="ui-checkbox"
+               name="weeklyTUE"
+               data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'weekly'"
+               data-ng-change="$ctrl.regenerateCron()"
+               data-ng-model="$ctrl.state.weekly.TUE"
+               data-ng-class="$ctrl.parsedOptions.formCheckboxClass">
+        周二
+      </div>
+      <div class="col-sm-6">
+        <input type="checkbox"
+               is="ui-checkbox"
+               name="weeklyWED"
+               data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'weekly'"
+               data-ng-change="$ctrl.regenerateCron()"
+               data-ng-model="$ctrl.state.weekly.WED"
+               data-ng-class="$ctrl.parsedOptions.formCheckboxClass">
+        周三
+      </div>
+      <div class="col-sm-6">
+        <input type="checkbox"
+               is="ui-checkbox"
+               name="weeklyTHU"
+               data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'weekly'"
+               data-ng-change="$ctrl.regenerateCron()"
+               data-ng-model="$ctrl.state.weekly.THU"
+               data-ng-class="$ctrl.parsedOptions.formCheckboxClass">
+        周四
+      </div>
+      <div class="col-sm-6">
+        <input type="checkbox"
+               is="ui-checkbox"
+               name="weeklyFRI"
+               data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'weekly'"
+               data-ng-change="$ctrl.regenerateCron()"
+               data-ng-model="$ctrl.state.weekly.FRI"
+               data-ng-class="$ctrl.parsedOptions.formCheckboxClass">
+        周五
+      </div>
+      <div class="col-sm-6">
+        <input type="checkbox"
+               is="ui-checkbox"
+               name="weeklySAT"
+               data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'weekly'"
+               data-ng-change="$ctrl.regenerateCron()"
+               data-ng-model="$ctrl.state.weekly.SAT"
+               data-ng-class="$ctrl.parsedOptions.formCheckboxClass">
+        周六
+      </div>
+      <div class="col-sm-6">
+        <input type="checkbox"
+               is="ui-checkbox"
+               name="weeklySUN"
+               data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'weekly'"
+               data-ng-change="$ctrl.regenerateCron()"
+               data-ng-model="$ctrl.state.weekly.SUN"
+               data-ng-class="$ctrl.parsedOptions.formCheckboxClass">
+        周日
+      </div>
+    </div>
+
+    <cron-gen-time-select
+      is-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'weekly'"
+      on-change="$ctrl.regenerateCron()"
+      name-prefix="weekly"
+      is-required="$ctrl.activeTab === 'weekly'"
+      model="$ctrl.state.weekly"
+      select-class="$ctrl.parsedOptions.formSelectClass"
+      use-24-hour-time="$ctrl.parsedOptions.use24HourTime"
+      hide-seconds="$ctrl.parsedOptions.hideSeconds">
+    </cron-gen-time-select>
+    执行
+  </div>
+  <div data-ng-show="!$ctrl.parsedOptions.hideMonthlyTab" id="monthly" class="ui-tab-content">
+    <div>
+
+      在每月
+      <select is="ui-select"
+              class="month-days"
+              name="monthlySpecificDayDay"
+              data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'monthly' || $ctrl.state.monthly.subTab !== 'specificDay'"
+              data-ng-change="$ctrl.regenerateCron()"
+              data-ng-model="$ctrl.state.monthly.specificDay.day"
+              data-ng-required="$ctrl.activeTab === 'monthly' && $ctrl.state.monthly.subTab === 'specificDay'"
+              data-ng-options="monthDaysWithLast as $ctrl.monthDayDisplay(monthDaysWithLast) for monthDaysWithLast in $ctrl.selectOptions.monthDaysWithLasts"
+              data-ng-class="$ctrl.parsedOptions.formSelectClass">
+      </select>
+
+      <cron-gen-time-select
+        is-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'monthly' || $ctrl.state.monthly.subTab !== 'specificDay'"
+        on-change="$ctrl.regenerateCron()"
+        name-prefix="monthlySpecificDay"
+        is-required="$ctrl.activeTab === 'monthly' && $ctrl.state.monthly.subTab === 'specificDay'"
+        model="$ctrl.state.monthly.specificDay"
+        select-class="$ctrl.parsedOptions.formSelectClass"
+        use-24-hour-time="$ctrl.parsedOptions.use24HourTime"
+        hide-seconds="$ctrl.parsedOptions.hideSeconds">
+      </cron-gen-time-select>
+      执行，每隔
+      <select is="ui-select"
+              class="months-small"
+              name="monthlySpecificDayMonths"
+              data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'monthly' || $ctrl.state.monthly.subTab !== 'specificDay'"
+              data-ng-change="$ctrl.regenerateCron()"
+              data-ng-model="$ctrl.state.monthly.specificDay.months"
+              data-ng-required="$ctrl.activeTab === 'monthly' && $ctrl.state.monthly.subTab === 'specificDay'"
+              data-ng-options="month as month for month in $ctrl.selectOptions.months"
+              data-ng-class="$ctrl.parsedOptions.formSelectClass">
+      </select>
+      个月执行一次
+    </div>
+
+  </div>
+  <div data-ng-show="!$ctrl.parsedOptions.hideYearlyTab" id="yearly" class="ui-tab-content">
+    <div>
+      <input type="radio"
+             is="ui-radio"
+             value="specificMonthDay"
+             data-ng-disabled="$ctrl.ngDisabled"
+             data-ng-change="$ctrl.regenerateCron()"
+             data-ng-model="$ctrl.state.yearly.subTab"
+             data-ng-class="$ctrl.state.formRadioClass"
+             name="yearly-radio">
+      每年
+      <select is="ui-select"
+              class="months"
+              name="yearlySpecificMonthDayMonth"
+              data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'yearly' || $ctrl.state.yearly.subTab !== 'specificMonthDay'"
+              data-ng-change="$ctrl.regenerateCron()"
+              data-ng-model="$ctrl.state.yearly.specificMonthDay.month"
+              data-ng-required="$ctrl.activeTab === 'yearly' && $ctrl.state.yearly.subTab === 'specificMonthDay'"
+              data-ng-options="month as $ctrl.monthDisplay(month) for month in $ctrl.selectOptions.months"
+              data-ng-class="$ctrl.parsedOptions.formSelectClass">
+      </select>
+      <select is="ui-select"
+              class="month-days"
+              name="yearlySpecificMonthDayDay"
+              data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'yearly' || $ctrl.state.yearly.subTab !== 'specificMonthDay'"
+              data-ng-change="$ctrl.regenerateCron()"
+              data-ng-model="$ctrl.state.yearly.specificMonthDay.day"
+              data-ng-required="$ctrl.activeTab === 'yearly' && $ctrl.state.yearly.subTab === 'specificMonthDay'"
+              data-ng-options="monthDaysWithLast as $ctrl.monthDayDisplay(monthDaysWithLast) for monthDaysWithLast in $ctrl.selectOptions.monthDaysWithLasts"
+              data-ng-class="$ctrl.parsedOptions.formSelectClass">
+      </select>
+      <cron-gen-time-select
+        is-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'yearly' || $ctrl.state.yearly.subTab !== 'specificMonthDay'"
+        on-change="$ctrl.regenerateCron()"
+        is-required="$ctrl.activeTab === 'yearly' && $ctrl.state.yearly.subTab === 'specificMonthDay'"
+        name-prefix="yearlySpecificMonthDay"
+        model="$ctrl.state.yearly.specificMonthDay"
+        select-class="$ctrl.parsedOptions.formSelectClass"
+        use-24-hour-time="$ctrl.parsedOptions.use24HourTime"
+        hide-seconds="$ctrl.parsedOptions.hideSeconds">
+      </cron-gen-time-select>
+      执行一次
+    </div>
+    <div>
+      <input type="radio"
+             is="ui-radio"
+             value="specificMonthWeek"
+             data-ng-disabled="$ctrl.ngDisabled"
+             data-ng-change="$ctrl.regenerateCron()"
+             data-ng-model="$ctrl.state.yearly.subTab"
+             data-ng-class="$ctrl.state.formRadioClass"
+             name="yearly-radio">
+      每年
+      <select is="ui-select"
+              class="months"
+              name="yearlySpecificMonthWeekMontMonth"
+              data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'yearly' || $ctrl.state.yearly.subTab !== 'specificMonthWeek'"
+              data-ng-change="$ctrl.regenerateCron()"
+              data-ng-model="$ctrl.state.yearly.specificMonthWeek.month"
+              data-ng-required="$ctrl.activeTab === 'yearly' && $ctrl.state.yearly.subTab === 'specificMonthWeek'"
+              data-ng-options="month as $ctrl.monthDisplay(month) for month in $ctrl.selectOptions.months"
+              data-ng-class="$ctrl.parsedOptions.formSelectClass">
+      </select>
+      的
+      <select is="ui-select"
+              class="day-order-in-month"
+              name="yearlySpecificMonthWeekMonthWeek"
+              data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'yearly' || $ctrl.state.yearly.subTab !== 'specificMonthWeek'"
+              data-ng-change="$ctrl.regenerateCron()"
+              data-ng-model="$ctrl.state.yearly.specificMonthWeek.monthWeek"
+              data-ng-required="$ctrl.activeTab === 'yearly' && $ctrl.state.yearly.subTab === 'specificMonthWeek'"
+              data-ng-options="monthWeek as $ctrl.monthWeekDisplay(monthWeek) for monthWeek in $ctrl.selectOptions.monthWeeks"
+              data-ng-class="$ctrl.parsedOptions.formSelectClass">
+      </select>
+      <select is="ui-select"
+              class="week-days"
+              name="yearlySpecificMonthWeekMonthDay"
+              data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'yearly' || $ctrl.state.yearly.subTab !== 'specificMonthWeek'"
+              data-ng-change="$ctrl.regenerateCron()"
+              data-ng-model="$ctrl.state.yearly.specificMonthWeek.day"
+              data-ng-required="$ctrl.activeTab === 'yearly' && $ctrl.state.yearly.subTab === 'specificMonthWeek'"
+              data-ng-options="day as $ctrl.dayDisplay(day) for day in $ctrl.selectOptions.days"
+              data-ng-class="$ctrl.parsedOptions.formSelectClass">
+      </select>
+      <cron-gen-time-select
+        is-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'yearly' || $ctrl.state.yearly.subTab !== 'specificMonthWeek'"
+        on-change="$ctrl.regenerateCron()"
+        name-prefix="yearlySpecificMonthWeek"
+        is-required="$ctrl.activeTab === 'yearly' && $ctrl.state.yearly.subTab === 'specificMonthWeek'"
+        model="$ctrl.state.yearly.specificMonthWeek"
+        select-class="$ctrl.parsedOptions.formSelectClass"
+        use-24-hour-time="$ctrl.parsedOptions.use24HourTime"
+        hide-seconds="$ctrl.parsedOptions.hideSeconds">
+      </cron-gen-time-select>
+      执行一次
+    </div>
+
+  </div>
+  <div data-ng-show="!$ctrl.parsedOptions.hideAdvancedTab" id="advanced" class="ui-tab-content active">
+   <div>
+     Cron 表达式
+     <input type="text"
+            is="ui-input"
+            class="advanced-cron-gen-input"
+            name="advancedExpression"
+            data-ng-disabled="$ctrl.ngDisabled || $ctrl.activeTab !== 'advanced'"
+            data-ng-change="$ctrl.regenerateCron()"
+            data-ng-model="$ctrl.state.advanced.expression"
+            data-ng-required="$ctrl.activeTab === 'advanced'"
+            data-ng-class="$ctrl.parsedOptions.formInputClass">
+   </div>
+  </div>
+</div>

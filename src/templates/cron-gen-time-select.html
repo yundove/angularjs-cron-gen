@@ -1,0 +1,44 @@
+<div class="inline-block">
+    <select is="ui-select"
+            class="hour-types"
+            name="{{namePrefix}}HourType"
+            data-ng-if="!$ctrl.use24HourTime"
+            data-ng-disabled="$ctrl.isDisabled"
+            data-ng-change="$ctrl.onChange()"
+            data-ng-model="$ctrl.model.hourType"
+            data-ng-options="hourType as $ctrl.ampmDisplay(hourType) for hourType in $ctrl.selectOptions.hourTypes"
+            data-ng-required="$ctrl.isRequired"
+            data-ng-class="$ctrl.selectClass">
+    </select>
+    <select is="ui-select"
+            class="hours"
+            name="{{namePrefix}}Hours"
+            data-ng-disabled="$ctrl.isDisabled"
+            data-ng-change="$ctrl.onChange()"
+            data-ng-required="$ctrl.isRequired"
+            data-ng-model="$ctrl.model.hours"
+            data-ng-options="hour as $ctrl.cronGenService.padNumber(hour) for hour in $ctrl.selectOptions.hours"
+            data-ng-class="$ctrl.selectClass">
+    </select>
+    <select is="ui-select"
+            class="minutes"
+            name="{{namePrefix}}Minutes"
+            data-ng-disabled="$ctrl.isDisabled"
+            data-ng-change="$ctrl.onChange()"
+            data-ng-required="$ctrl.isRequired"
+            data-ng-model="$ctrl.model.minutes"
+            data-ng-options="minute as $ctrl.cronGenService.padNumber(minute) for minute in $ctrl.selectOptions.minutes"
+            data-ng-class="$ctrl.selectClass">
+    </select>
+    <select is="ui-select"
+            class="seconds"
+            name="{{namePrefix}}Seconds"
+            data-ng-show="!$ctrl.hideSeconds"
+            data-ng-disabled="$ctrl.isDisabled"
+            data-ng-change="$ctrl.onChange()"
+            data-ng-required="$ctrl.isRequired"
+            data-ng-model="$ctrl.model.seconds"
+            data-ng-options="second as $ctrl.cronGenService.padNumber(second) for second in $ctrl.selectOptions.seconds"
+            data-ng-class="$ctrl.selectClass">
+    </select>
+</div>
